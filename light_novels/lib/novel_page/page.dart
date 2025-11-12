@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:light_novels/novel_page/content_section.dart';
-import 'package:light_novels/novel_page/header_section.dart';
+import 'package:light_novels/novel_page/content.dart';
+import 'package:light_novels/novel_page/header.dart';
 import 'package:light_novels/novel_page/summary.dart';
 import 'dart:math';
 
@@ -99,12 +99,12 @@ class _NovelPageState extends State<NovelPage> {
   double _getHeaderTop() {
     return -min(
       _scrollOffset,
-      (_scrollOffset + _headerHeight - _windowHeight) / 4,
+      (_scrollOffset + _headerHeight - _windowHeight) / 3.0,
     );
   }
 
   double _getHeaderOpacity() {
-    return (_getSummaryTop() * 1.5 / _windowHeight).clamp(0.0, 1.0);
+    return (_getSummaryTop() * 2.5 / _windowHeight).clamp(0.0, 1.0);
   }
 
   // 計算 Summary 的位置
@@ -113,14 +113,13 @@ class _NovelPageState extends State<NovelPage> {
     return -min(
       _scrollOffset - totalPreviousHeight,
       (_scrollOffset - totalPreviousHeight + _summaryHeight - _windowHeight) /
-          4,
+          3.0,
     );
-    //return _headerHeight - _scrollOffset.clamp(0.0, _summaryHeight);
   }
 
   double _getSummaryOpacity() {
     if ((_windowHeight - _getContentTop() > 0.1)) {
-      return (_getContentTop() * 1.5 / _windowHeight).clamp(0.0, 1.0);
+      return (_getContentTop() * 2.5 / _windowHeight).clamp(0.0, 1.0);
     } else {
       return ((_windowHeight - _getSummaryTop() * 1.5) / _windowHeight).clamp(
         0.0,
@@ -180,19 +179,17 @@ class _NovelPageState extends State<NovelPage> {
           onPointerSignal: (pointerSignal) {
             if (pointerSignal is PointerScrollEvent) {
               _updateScrollOffset(
-                (_scrollOffset + pointerSignal.scrollDelta.dy).clamp(
+                (_scrollOffset + pointerSignal.scrollDelta.dy * 2.0).clamp(
                   0.0,
                   _getTotalScrollHeight(),
                 ),
               );
-            } else {
-              print(pointerSignal.kind.name);
             }
           },
           child: GestureDetector(
             onVerticalDragUpdate: (details) {
               _updateScrollOffset(
-                (_scrollOffset - details.delta.dy).clamp(
+                (_scrollOffset - details.delta.dy * 2.0).clamp(
                   0.0,
                   _getTotalScrollHeight(),
                 ),
@@ -201,56 +198,35 @@ class _NovelPageState extends State<NovelPage> {
             child: Stack(
               children: [
                 // Header Section (最底層) - 可滾動
-                Positioned(
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 100),
                   top: _getHeaderTop(),
                   left: 0,
                   right: 0,
-                  child: NotificationListener<SizeChangedLayoutNotification>(
-                    onNotification: (notification) {
-                      _remeasureIfNeeded();
-                      return true;
-                    },
-                    // 移除 Container 的背景色
-                    child: Container(
-                      key: _headerKey,
-                      color: Colors.transparent, // 改為透明
-                      child: Opacity(
-                        opacity: _getHeaderOpacity(),
-                        child: NovelHeaderSection(novel: widget.novel),
-                      ),
-                    ),
+                  child: NovelHeader(
+                    containerKey: _headerKey,
+                    opacity: _getHeaderOpacity(),
+                    novel: widget.novel,
                   ),
                 ),
 
                 // Summary Section (中間層) - 可滾動
-                Positioned(
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 100),
                   top: _getSummaryTop(),
                   left: 0,
                   right: 0,
-                  child: NotificationListener<SizeChangedLayoutNotification>(
-                    onNotification: (notification) {
-                      _remeasureIfNeeded();
-                      return true;
-                    },
-                    // 移除 Container 的背景色
-                    child: Container(
-                      key: _summaryKey,
-                      color: Colors.transparent, // 改為透明
-                      child: Opacity(
-                        opacity: _getSummaryOpacity(),
-                        child: NovelSummary(
-                          text: widget.novel["summary"],
-                          info: widget.novel["info"],
-                        ),
-                      ),
-                    ),
+                  child: NovelSummary(
+                    containerKey: _summaryKey,
+                    opacity: _getSummaryOpacity(),
+                    text: widget.novel["summary"],
+                    info: widget.novel["info"],
                   ),
                 ),
 
                 // Content Section (最上層) - 可滾動
-                Positioned(
-                  // 【新增】限制 Content 區塊的高度，使其不會超出螢幕底部，允許它滾動
-                  // 這裡假設 AppBar 下方的空間就是 Content 可佔用的最大空間
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 100),
                   top: _getContentTop(),
                   left: 0,
                   right: 0,
@@ -260,16 +236,11 @@ class _NovelPageState extends State<NovelPage> {
                       return true;
                     },
                     child: SizeChangedLayoutNotifier(
-                      child: Container(
-                        key: _contentKey,
-                        color: Colors.transparent,
-                        child: Opacity(
-                          opacity: _getContentOpacity(),
-                          child: NovelContentSection(
-                            content: widget.novel["content"],
-                            links: widget.novel["links"],
-                          ),
-                        ),
+                      child: NovelContent(
+                        containerKey: _contentKey,
+                        opacity: _getContentOpacity(),
+                        content: widget.novel["content"],
+                        links: widget.novel["links"],
                       ),
                     ),
                   ),
