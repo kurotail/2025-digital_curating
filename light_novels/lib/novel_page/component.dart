@@ -63,7 +63,6 @@ class NovelContentQuote extends StatelessWidget {
             width: 4,
           ),
         ),
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.2),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(text, style: const TextStyle(fontStyle: FontStyle.italic)),
