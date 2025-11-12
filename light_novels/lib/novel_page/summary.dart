@@ -8,23 +8,37 @@ class NovelSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding:  const EdgeInsets.all(12),
-          child: NovelContentText(text: text),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: MediaQuery.of(context).size.width,
+        minHeight: MediaQuery.of(context).size.height,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            NovelContentText(text: "# 簡介\n$text"),
+            NovelContentText(text: "# 書本資訊"),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                runSpacing: 12,
+                spacing: 24,
+                children:
+                    info.entries
+                        .map(
+                          (e) => _InfoItem(
+                            label: e.key,
+                            value: e.value.toString(),
+                          ),
+                        )
+                        .toList(),
+              ),
+            ),
+          ],
         ),
-        Padding(
-        padding: const EdgeInsets.all(24),
-        child: Wrap(
-          runSpacing: 12,
-          spacing: 24,
-          children: info.entries
-              .map((e) => _InfoItem(label: e.key, value: e.value.toString()))
-              .toList(),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
