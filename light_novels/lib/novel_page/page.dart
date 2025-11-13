@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:light_novels/novel_page/content.dart';
 import 'package:light_novels/novel_page/header.dart';
+import 'package:light_novels/novel_page/scroll_indicator.dart';
 import 'package:light_novels/novel_page/summary.dart';
 import 'dart:math';
 
@@ -116,9 +117,9 @@ class _NovelPageState extends State<NovelPage> {
 
   double _getSummaryOpacity() {
     if ((_windowHeight - _getContentTop() > 0.1)) {
-      return (_getContentTop() * 2.5 / _windowHeight).clamp(0.0, 1.0);
+      return (_getContentTop() * 1.5 / _windowHeight).clamp(0.0, 1.0);
     } else {
-      return ((_windowHeight - _getSummaryTop() * 1.5) / _windowHeight).clamp(
+      return ((_windowHeight - _getSummaryTop() * 2.5) / _windowHeight).clamp(
         0.0,
         1.0,
       );
@@ -153,6 +154,10 @@ class _NovelPageState extends State<NovelPage> {
       final t = min(1.0, contentScroll / contentScrollableLength);
       return Color.lerp(summaryColor, contentColor, t) ?? summaryColor;
     }
+  }
+
+  bool _showIndicator() {
+    return _getTotalScrollHeight() - _scrollOffset > _windowHeight * 0.5;
   }
 
   @override
@@ -242,6 +247,7 @@ class _NovelPageState extends State<NovelPage> {
                     ),
                   ),
                 ),
+                _showIndicator() ? ScrollIndicator() : Container(),
               ],
             ),
           ),
