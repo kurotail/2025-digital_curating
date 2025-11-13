@@ -14,15 +14,12 @@ class NovelPage extends StatefulWidget {
 }
 
 class _NovelPageState extends State<NovelPage> {
-  // 共用的滾動偏移量
   double _scrollOffset = 0.0;
 
-  // 儲存每個區塊的高度
   double _headerHeight = 0.0;
   double _summaryHeight = 0.0;
   double _contentHeight = 0.0;
 
-  // 用於測量高度的 GlobalKey
   final GlobalKey _headerKey = GlobalKey();
   final GlobalKey _summaryKey = GlobalKey();
   final GlobalKey _contentKey = GlobalKey();
@@ -143,7 +140,7 @@ class _NovelPageState extends State<NovelPage> {
 
   // 計算總的可滾動高度
   double _getTotalScrollHeight() {
-    return _summaryHeight + _contentHeight;
+    return _headerHeight + _summaryHeight + _contentHeight - _windowHeight;
   }
 
   Color _getBackgroundColor() {

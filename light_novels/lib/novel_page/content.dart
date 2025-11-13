@@ -17,6 +17,7 @@ class NovelContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double _windowHeight = MediaQuery.of(context).size.height;
     return Container(
       key: containerKey,
       color: Colors.transparent,
@@ -24,7 +25,7 @@ class NovelContent extends StatelessWidget {
         opacity: opacity ?? 1.0,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height * 1.1,
+            minHeight: _windowHeight * 1.1,
           ),
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -67,7 +68,7 @@ class NovelContent extends StatelessWidget {
                         );
                       }).toList(),
                 ),
-                SizedBox(width: 0, height: 40),
+                SizedBox(width: 0, height: _windowHeight * 0.1),
               ],
             ),
           ),
