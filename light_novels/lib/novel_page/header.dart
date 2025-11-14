@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:light_novels/loading_animation.dart';
 
 class NovelHeader extends StatelessWidget {
   final GlobalKey containerKey;
@@ -33,7 +34,15 @@ class NovelHeader extends StatelessWidget {
                       aspectRatio: 3 / 4,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(novel["cover"], fit: BoxFit.cover),
+                        child: Image.network(
+                          novel["cover"],
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.high,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return LoadingAnimation();
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:light_novels/loading_animation.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 
 class NovelContentText extends StatefulWidget {
@@ -111,10 +112,15 @@ class _NovelContentImageState extends State<NovelContentImage>
                 child: child!,
               );
             },
-            child: Image.asset(
+            child: Image.network(
               widget.item["path"],
               fit: BoxFit.contain,
               width: double.infinity,
+              filterQuality: FilterQuality.high,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return LoadingAnimation();
+              },
             ),
           ),
           if (widget.item["caption"] != null)
