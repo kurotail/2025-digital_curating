@@ -20,6 +20,40 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: rotate 4s linear infinite;
+        }
+        .loading_container img {
+            width: 256px;
+            height: 256px;
+            object-fit: contain;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+    <div class="loader-container">
+        <img src="loading_icon.png">
+    </div>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

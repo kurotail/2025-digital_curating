@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:light_novels/loading_animation.dart';
 import 'package:light_novels/novel_page/page.dart';
 import 'dart:convert';
@@ -28,6 +29,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void loadJsonData(String name) async {
+    print("loading $name");
     final String jsonString = await rootBundle.loadString(
       'assets/$name/context.json',
     );
@@ -47,7 +49,7 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: NovelPage(novel: novelData),
+        home: NovelPage(novel: novelData).animate().fadeIn(duration: 1.seconds),
       );
     }
   }
