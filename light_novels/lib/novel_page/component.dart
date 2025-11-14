@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:light_novels/loading_animation.dart';
 import 'package:markdown_widget/markdown_widget.dart';
+import 'package:light_novels/theme_config.dart';
 
 class NovelContentText extends StatefulWidget {
   final String text;
-  const NovelContentText({required this.text, super.key});
+  final NovelTheme theme;
+  const NovelContentText({super.key, required this.text, required this.theme});
 
   @override
   State<NovelContentText> createState() => _NovelContentTextState();
@@ -50,7 +52,10 @@ class _NovelContentTextState extends State<NovelContentText> {
         child: Padding(
           key: _key,
           padding: const EdgeInsets.only(bottom: 16),
-          child: MarkdownBlock(data: widget.text),
+          child: MarkdownBlock(
+            data: widget.text,
+            config: widget.theme.getMarkdownStyle()
+          ),
         ),
       ),
     );
@@ -59,7 +64,8 @@ class _NovelContentTextState extends State<NovelContentText> {
 
 class NovelContentImage extends StatefulWidget {
   final Map<String, dynamic> item;
-  const NovelContentImage({required this.item, super.key});
+  final NovelTheme theme;
+  const NovelContentImage({super.key, required this.item, required this.theme});
 
   @override
   State<NovelContentImage> createState() => _NovelContentImageState();
@@ -128,7 +134,7 @@ class _NovelContentImageState extends State<NovelContentImage>
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 widget.item["caption"],
-                style: Theme.of(context).textTheme.bodySmall,
+                style: widget.theme.getCaptionStyle(),
               ),
             ),
         ],
@@ -139,7 +145,8 @@ class _NovelContentImageState extends State<NovelContentImage>
 
 class NovelContentQuote extends StatelessWidget {
   final String text;
-  const NovelContentQuote({required this.text, super.key});
+  final NovelTheme theme;
+  const NovelContentQuote({super.key, required this.text, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +162,7 @@ class NovelContentQuote extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(text, style: const TextStyle(fontStyle: FontStyle.italic)),
+      child: Text(text, style: theme.getQuoteStyle()),
     );
   }
 }

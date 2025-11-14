@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:light_novels/novel_page/component.dart';
+import 'package:light_novels/theme_config.dart';
 
 class NovelSummary extends StatelessWidget {
   final GlobalKey containerKey;
   final String text;
   final Map<String, dynamic> info;
   final double? opacity;
+  final NovelTheme theme;
   const NovelSummary({
     super.key,
     required this.containerKey,
     required this.text,
     required this.info,
     this.opacity,
+    required this.theme,
   });
 
   @override
@@ -23,15 +26,15 @@ class NovelSummary extends StatelessWidget {
         opacity: opacity ?? 1.0,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height * 1.1,
+            minHeight: MediaQuery.sizeOf(context).height * 1.1,
           ),
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                NovelContentText(text: "# 簡介\n$text"),
-                NovelContentText(text: "# 書本資訊"),
+                NovelContentText(text: "# 簡介\n$text", theme: theme),
+                NovelContentText(text: "# 書本資訊", theme: theme),
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Wrap(
@@ -43,6 +46,7 @@ class NovelSummary extends StatelessWidget {
                               (e) => _InfoItem(
                                 label: e.key,
                                 value: e.value.toString(),
+                                theme: theme,
                               ),
                             )
                             .toList(),
@@ -59,7 +63,8 @@ class NovelSummary extends StatelessWidget {
 
 class _InfoItem extends StatelessWidget {
   final String label, value;
-  const _InfoItem({required this.label, required this.value});
+  final NovelTheme theme;
+  const _InfoItem({required this.label, required this.value, required this.theme});
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +73,8 @@ class _InfoItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(value),
+          Text(label, style: theme.getSecondaryStyle()),
+          Text(value, style: theme.getBodyStyle()),
         ],
       ),
     );

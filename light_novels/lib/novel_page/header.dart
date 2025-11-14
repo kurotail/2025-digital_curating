@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:light_novels/loading_animation.dart';
+import 'package:light_novels/theme_config.dart';
 
 class NovelHeader extends StatelessWidget {
   final GlobalKey containerKey;
   final Map<String, dynamic> novel;
   final double? opacity;
+  final NovelTheme theme;
+  
   const NovelHeader({
     super.key,
     required this.containerKey,
     required this.novel,
+    required this.theme,
     this.opacity,
   });
 
@@ -52,22 +56,27 @@ class NovelHeader extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         child: Text(
                           novel["title"],
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style: theme.getTitleStyle(),
                         ),
                       ),
                     ),
                     Text(
                       novel["author"],
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: theme.getSecondaryStyle(),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
                       alignment: WrapAlignment.center,
                       spacing: 6,
-                      children:
-                          (novel["tags"] as List)
-                              .map((tag) => Chip(label: Text(tag)))
-                              .toList(),
+                      children: (novel["tags"] as List)
+                          .map((tag) => Chip(
+                                label: Text(
+                                  tag,
+                                  style: theme.getSmallStyle(),
+                                ),
+                                backgroundColor: theme.chipBg,
+                              ))
+                          .toList(),
                     ),
                   ],
                 ),

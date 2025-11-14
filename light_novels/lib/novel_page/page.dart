@@ -4,6 +4,7 @@ import 'package:light_novels/novel_page/content.dart';
 import 'package:light_novels/novel_page/header.dart';
 import 'package:light_novels/novel_page/scroll_indicator.dart';
 import 'package:light_novels/novel_page/summary.dart';
+import 'package:light_novels/theme_config.dart';
 import 'dart:math';
 
 class NovelPage extends StatefulWidget {
@@ -25,39 +26,28 @@ class _NovelPageState extends State<NovelPage> {
   final GlobalKey _summaryKey = GlobalKey();
   final GlobalKey _contentKey = GlobalKey();
 
-  // 定義每個區塊的背景顏色
-  Color headerColor = Colors.blue.shade50;
-  Color summaryColor = Colors.green.shade50;
-  Color contentColor = Colors.orange.shade50;
-
   double _windowHeight = 0.0;
-  // double _windowWidth = 0.0;
 
-  bool _nightColor = false;
+  // 使用 NovelTheme 管理主題
+  late NovelTheme _theme;
 
   @override
   void initState() {
     super.initState();
-    // 在下一幀測量高度
+    _theme = NovelTheme.light(); // 預設為淺色主題
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _windowHeight = MediaQuery.of(context).size.height;
-      // _windowWidth = MediaQuery.of(context).size.width;
       _measureHeights();
     });
   }
 
-  void _toggleColors() {
-    _nightColor = !_nightColor;
+  void _toggleTheme() {
     setState(() {
-      headerColor =
-          _nightColor ? Colors.blueGrey.shade900 : Colors.blue.shade50;
-      summaryColor = _nightColor ? Colors.teal.shade900 : Colors.green.shade50;
-      contentColor =
-          _nightColor ? Colors.brown.shade900 : Colors.orange.shade50;
+      _theme = _theme.isDark ? NovelTheme.light() : NovelTheme.dark();
     });
   }
 
-  // 測量所有子元件的高度
   void _measureHeights() {
     final headerBox =
         _headerKey.currentContext?.findRenderObject() as RenderBox?;
@@ -75,7 +65,6 @@ class _NovelPageState extends State<NovelPage> {
     }
   }
 
-  // 當內容變化時重新測量
   void _remeasureIfNeeded() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final contentBox =
@@ -86,14 +75,12 @@ class _NovelPageState extends State<NovelPage> {
     });
   }
 
-  // 更新共用的滾動偏移量
   void _updateScrollOffset(double offset) {
     setState(() {
       _scrollOffset = offset;
     });
   }
 
-  // 計算 Header 的位置
   double _getHeaderTop() {
     return -min(
       _scrollOffset,
@@ -105,7 +92,6 @@ class _NovelPageState extends State<NovelPage> {
     return (_getSummaryTop() * 2.5 / _windowHeight).clamp(0.0, 1.0);
   }
 
-  // 計算 Summary 的位置
   double _getSummaryTop() {
     final totalPreviousHeight = _headerHeight;
     return -min(
@@ -126,7 +112,6 @@ class _NovelPageState extends State<NovelPage> {
     }
   }
 
-  // 計算 Content 的位置
   double _getContentTop() {
     final totalPreviousHeight = _headerHeight + _summaryHeight;
     return totalPreviousHeight - _scrollOffset.clamp(0.0, double.infinity);
@@ -139,7 +124,6 @@ class _NovelPageState extends State<NovelPage> {
     );
   }
 
-  // 計算總的可滾動高度
   double _getTotalScrollHeight() {
     return _headerHeight + _summaryHeight + _contentHeight - _windowHeight;
   }
@@ -147,12 +131,12 @@ class _NovelPageState extends State<NovelPage> {
   Color _getBackgroundColor() {
     if (_scrollOffset <= _summaryHeight) {
       final t = _scrollOffset / _summaryHeight;
-      return Color.lerp(headerColor, summaryColor, t) ?? headerColor;
+      return Color.lerp(_theme.headerBg, _theme.summaryBg, t) ?? _theme.headerBg;
     } else {
       final contentScroll = _scrollOffset - _summaryHeight;
       final contentScrollableLength = _contentHeight;
       final t = min(1.0, contentScroll / contentScrollableLength);
-      return Color.lerp(summaryColor, contentColor, t) ?? summaryColor;
+      return Color.lerp(_theme.summaryBg, _theme.contentBg, t) ?? _theme.summaryBg;
     }
   }
 
@@ -165,18 +149,20 @@ class _NovelPageState extends State<NovelPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.novel["title"]),
+        backgroundColor: _theme.headerBg,
+        foregroundColor: _theme.primaryText,
         actions: [
           IconButton(
-            onPressed: () {
-              _toggleColors();
-            },
-            icon: _nightColor ? Icon(Icons.light_mode) : Icon(Icons.dark_mode),
+            onPressed: _toggleTheme,
+            icon: _theme.isDark 
+              ? const Icon(Icons.light_mode) 
+              : const Icon(Icons.dark_mode),
           ),
         ],
       ),
       body: AnimatedContainer(
         duration: const Duration(milliseconds: 500),
-        color: _getBackgroundColor(), // 應用漸變顏色
+        color: _getBackgroundColor(),
         child: Listener(
           onPointerSignal: (pointerSignal) {
             if (pointerSignal is PointerScrollEvent) {
@@ -199,7 +185,6 @@ class _NovelPageState extends State<NovelPage> {
             },
             child: Stack(
               children: [
-                // Header Section (最底層) - 可滾動
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 100),
                   top: _getHeaderTop(),
@@ -209,10 +194,9 @@ class _NovelPageState extends State<NovelPage> {
                     containerKey: _headerKey,
                     opacity: _getHeaderOpacity(),
                     novel: widget.novel,
+                    theme: _theme,
                   ),
                 ),
-
-                // Summary Section (中間層) - 可滾動
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 100),
                   top: _getSummaryTop(),
@@ -223,10 +207,9 @@ class _NovelPageState extends State<NovelPage> {
                     opacity: _getSummaryOpacity(),
                     text: widget.novel["summary"],
                     info: widget.novel["info"],
+                    theme: _theme,
                   ),
                 ),
-
-                // Content Section (最上層) - 可滾動
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 100),
                   top: _getContentTop(),
@@ -243,11 +226,14 @@ class _NovelPageState extends State<NovelPage> {
                         opacity: _getContentOpacity(),
                         content: widget.novel["content"],
                         links: widget.novel["links"],
+                        theme: _theme,
                       ),
                     ),
                   ),
                 ),
-                _showIndicator() ? ScrollIndicator() : Container(),
+                _showIndicator() 
+                  ? ScrollIndicator() 
+                  : Container(),
               ],
             ),
           ),
