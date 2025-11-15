@@ -9,7 +9,9 @@ import 'dart:math';
 
 class NovelPage extends StatefulWidget {
   final Map<String, dynamic> novel;
-  const NovelPage({super.key, required this.novel});
+  final VoidCallback onBack;
+
+  const NovelPage({super.key, required this.novel, required this.onBack});
 
   @override
   State<NovelPage> createState() => _NovelPageState();
@@ -35,7 +37,7 @@ class _NovelPageState extends State<NovelPage> {
   void initState() {
     super.initState();
     _theme = NovelTheme.light(); // 預設為淺色主題
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _windowHeight = MediaQuery.of(context).size.height;
       _measureHeights();
@@ -131,12 +133,14 @@ class _NovelPageState extends State<NovelPage> {
   Color _getBackgroundColor() {
     if (_scrollOffset <= _summaryHeight) {
       final t = _scrollOffset / _summaryHeight;
-      return Color.lerp(_theme.headerBg, _theme.summaryBg, t) ?? _theme.headerBg;
+      return Color.lerp(_theme.headerBg, _theme.summaryBg, t) ??
+          _theme.headerBg;
     } else {
       final contentScroll = _scrollOffset - _summaryHeight;
       final contentScrollableLength = _contentHeight;
       final t = min(1.0, contentScroll / contentScrollableLength);
-      return Color.lerp(_theme.summaryBg, _theme.contentBg, t) ?? _theme.summaryBg;
+      return Color.lerp(_theme.summaryBg, _theme.contentBg, t) ??
+          _theme.summaryBg;
     }
   }
 
@@ -148,15 +152,20 @@ class _NovelPageState extends State<NovelPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: widget.onBack,
+        ),
         title: Text(widget.novel["title"]),
         backgroundColor: _theme.headerBg,
         foregroundColor: _theme.primaryText,
         actions: [
           IconButton(
             onPressed: _toggleTheme,
-            icon: _theme.isDark 
-              ? const Icon(Icons.light_mode) 
-              : const Icon(Icons.dark_mode),
+            icon:
+                _theme.isDark
+                    ? const Icon(Icons.light_mode)
+                    : const Icon(Icons.dark_mode),
           ),
         ],
       ),
@@ -231,9 +240,7 @@ class _NovelPageState extends State<NovelPage> {
                     ),
                   ),
                 ),
-                _showIndicator() 
-                  ? ScrollIndicator() 
-                  : Container(),
+                _showIndicator() ? ScrollIndicator() : Container(),
               ],
             ),
           ),
