@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:light_novels/loading_animation.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:light_novels/theme_config.dart';
@@ -54,7 +55,7 @@ class _NovelContentTextState extends State<NovelContentText> {
           padding: const EdgeInsets.only(bottom: 16),
           child: MarkdownBlock(
             data: widget.text,
-            config: widget.theme.getMarkdownStyle()
+            config: widget.theme.getMarkdownStyle(),
           ),
         ),
       ),
@@ -62,42 +63,10 @@ class _NovelContentTextState extends State<NovelContentText> {
   }
 }
 
-class NovelContentImage extends StatefulWidget {
+class NovelContentImage extends StatelessWidget {
   final Map<String, dynamic> item;
   final NovelTheme theme;
   const NovelContentImage({super.key, required this.item, required this.theme});
-
-  @override
-  State<NovelContentImage> createState() => _NovelContentImageState();
-}
-
-class _NovelContentImageState extends State<NovelContentImage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _elevationAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
-
-    _elevationAnimation = Tween<double>(
-      begin: 0.5,
-      end: 15.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-    _controller.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,36 +75,25 @@ class _NovelContentImageState extends State<NovelContentImage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          AnimatedBuilder(
-            animation: _elevationAnimation,
-            builder: (context, child) {
-              return PhysicalModel(
-                elevation: _elevationAnimation.value,
-                color: Colors.white,
-                shadowColor: Colors.black,
-                borderRadius: BorderRadius.circular(8),
-                clipBehavior: Clip.antiAlias,
-                child: child!,
-              );
-            },
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
             child: Image.network(
-              widget.item["path"],
-              fit: BoxFit.contain,
-              width: double.infinity,
-              filterQuality: FilterQuality.high,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return LoadingAnimation();
-              },
-            ),
-          ),
-          if (widget.item["caption"] != null)
+                  item["path"],
+                  fit: BoxFit.contain,
+                  width: double.infinity,
+                  filterQuality: FilterQuality.high,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return LoadingAnimation();
+                  },
+                ),
+          )
+                .animate(onPlay: (controller) => controller.repeat())
+                .shake(delay: 10.seconds, duration: 1.seconds, rotation: 0.01, hz: 2.0, curve: Curves.easeInOutSine),
+          if (item["caption"] != null)
             Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                widget.item["caption"],
-                style: widget.theme.getCaptionStyle(),
-              ),
+              child: Text(item["caption"], style: theme.getCaptionStyle()),
             ),
         ],
       ),

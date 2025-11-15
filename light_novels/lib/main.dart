@@ -43,7 +43,7 @@ class _AppNavigatorState extends State<AppNavigator> {
   void initState() {
     super.initState();
     _loadInitialRoute();
-    
+
     // 監聽瀏覽器的返回/前進按鈕
     html.window.onPopState.listen((event) {
       _loadInitialRoute();
@@ -107,17 +107,12 @@ class _AppNavigatorState extends State<AppNavigator> {
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return Scaffold(
-        body: LoadingAnimation(),
-      );
+      return Scaffold(body: LoadingAnimation());
     }
 
     // 如果有指定小說且成功載入，顯示小說頁面
     if (novelName != null && novelData != null) {
-      return NovelPage(
-        novel: novelData!,
-        onBack: navigateToHome,
-      ).animate().fadeIn(duration: 600.ms);
+      return NovelPage(novel: novelData!, onBack: navigateToHome);
     }
 
     // 否則顯示首頁
