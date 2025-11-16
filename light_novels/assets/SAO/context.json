@@ -1,0 +1,32 @@
+{
+  "title": "刀劍神域",
+  "author": "川原礫",
+  "tags": [
+    "科幻"
+  ],
+  "summary": "故事設定在 2022 年，天才程式設計師茅場晶彥開發了完全潛行專用裝置 **NERvGear**，讓人類實現了虛擬實境的完全控制。\n\n萬眾矚目的首款 VR MMORPG **《刀劍神域》（Sword Art Online, SAO）** 正式上線。熱愛電玩的少年**桐谷和人（桐人）** 也是一萬名登入者之一。\n\n然而，在開始遊戲後不久，茅場晶彥突然現身，向所有玩家宣告：**登出鍵已被移除。** 玩家們必須攻略遊戲中高達一百層的浮游城「艾恩葛朗特」**，才能回到現實世界。但若是在遊戲中 HP 歸零，現實世界的玩家也會因 NERvGear 發出的高頻微波而腦部損壞，導致**真正的死亡。\n\n桐人為了生存，決心成為獨行玩家（Beater），並與夥伴們一起在這個死亡遊戲中展開漫長且艱苦的攻略之路。",
+  "cover": "assets/assets/SAO/image1.png",
+  "info": {
+    "出版社": "",
+    "台灣角川": "",
+    "ISBN": "9789862874136",
+    "發售日期": "2009年08月10日"
+  },
+  "content": [
+    {
+      "type": "image",
+      "path": "assets/assets/SAO/image2.png",
+      "caption": "動畫版封面"
+    },
+    {
+      "type": "quote",
+      "text": "**「這雖然是遊戲，但可不是鬧著玩的。」**"
+    }
+  ],
+  "links": [
+    {
+      "label": "購買連結[Sword Art Online刀劍神域 1: 艾恩葛朗特 │ 誠品線上]",
+      "url": "https://https://www.eslite.com/product/1001125121902520?attr=hQHwhAoMCLqp3MgGEMzmwrIBEAEaJDY5NDAzM2JhLTAwMDAtMmY2Yi1hMmQxLTA4OWUwODJmODdlYyoBMTIwkPeyMLa3jC2Ovp0V1LKdFcLwnhWY1rctm9a3Lajlqi2Okckwx5bwMI3AjzfJlvAwOg5kZWZhdWx0X3NlYXJjaEgBWAFoAXoCdGs"
+    }
+  ]
+}

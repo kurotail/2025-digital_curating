@@ -65,6 +65,13 @@ flutter:
     - assets/novels_config.json
     - assets/NGNL/
     - assets/MDNO/
+    - assets/86/
+    - assets/DMCI/
+    - assets/MARE/
+    - assets/SAO/
+    - assets/SXKX/
+    - assets/TNSR/
+    - assets/UNZG/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

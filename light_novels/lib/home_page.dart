@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:light_novels/loading_animation.dart';
+import 'package:light_novels/novel_carousel.dart';
 import 'dart:convert';
 
 class HomePage extends StatefulWidget {
@@ -23,7 +24,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadNovels() async {
-    // 讀取小說列表配置文件
     try {
       final String configString = await rootBundle.loadString(
         'assets/novels_config.json',
@@ -32,7 +32,6 @@ class _HomePageState extends State<HomePage> {
 
       List<Map<String, dynamic>> loadedNovels = [];
 
-      // 載入每本小說的基本信息
       for (String novelName in config['novels']) {
         try {
           final String jsonString = await rootBundle.loadString(
@@ -70,38 +69,62 @@ class _HomePageState extends State<HomePage> {
     }
 
     return novels.isEmpty
-        ? Center(
-          child: Text('暫無小說', style: Theme.of(context).textTheme.titleLarge),
+        ? Scaffold(
+          body: Center(
+            child: Text('暫無小說', style: Theme.of(context).textTheme.titleLarge),
+          ),
         )
-        : CustomScrollView(
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: _getCrossAxisCount(context),
-                  childAspectRatio: 0.6,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
+        : Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              // 輪播區域
+              SliverToBoxAdapter(
+                child: NovelCarousel(
+                  novels: novels,
+                  onNovelTap: widget.onNovelTap,
                 ),
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  return NovelCard(
-                        novel: novels[index],
-                        onTap: () => widget.onNovelTap(novels[index]['name']),
-                      )
-                      .animate()
-                      .fadeIn(duration: 600.ms, delay: (index * 100).ms)
-                      .slideY(
-                        begin: 0.3,
-                        end: 0,
-                        duration: 600.ms,
-                        delay: (index * 100).ms,
-                        curve: Curves.easeOutCubic,
-                      );
-                }, childCount: novels.length),
               ),
-            ),
-          ],
+              // 標題
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Text(
+                    '所有作品',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              // 小說網格
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: _getCrossAxisCount(context),
+                    childAspectRatio: 0.6,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    return NovelCard(
+                          novel: novels[index],
+                          onTap: () => widget.onNovelTap(novels[index]['name']),
+                        )
+                        .animate()
+                        .fadeIn(duration: 600.ms, delay: (index * 100).ms)
+                        .slideY(
+                          begin: 0.3,
+                          end: 0,
+                          duration: 600.ms,
+                          delay: (index * 100).ms,
+                          curve: Curves.easeOutCubic,
+                        );
+                  }, childCount: novels.length),
+                ),
+              ),
+            ],
+          ),
         );
   }
 
